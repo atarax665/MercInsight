@@ -1,0 +1,7 @@
+langchain
+sentence_transformers
+faiss-cpu
+ctransformers
+PyPDF2
+typing_extensions
+flask

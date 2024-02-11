@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MercInsight</title>
+    <style>
+        body {
+            background-color: black; 
+        }
+        .navbar {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .navbar-logo {
+            width: 100%;
+            height: auto; 
+            max-width: 80px;
+            mix-blend-mode: difference; 
+        }
+        .navbar-text {
+            margin: 0;
+            margin-left: 10px;
+        }
+        .chat-container {
+            width: 90%;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .messages {
+            padding: 20px;
+            overflow-y: scroll;
+            height: 300px;
+        }
+        .message {
+            margin-bottom: 10px;
+        }
+        .message p {
+            padding: 10px 15px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            display: inline-block;
+            max-width: 70%;
+        }
+        .user-message p {
+            background-color: #3498db;
+            color: #fff;
+        }
+        .input-container {
+            padding: 10px 20px;
+            border-top: 1px solid #eee;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+        input[type="submit"] {
+            width: 80px;
+            padding: 10px;
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <img src="static/mercedes-benz.jpeg" alt="Mercedes Logo" class="navbar-logo">
+        <h1 class="navbar-text">MercInsight</h1>
+    </div>
+    <div class="chat-container">
+        <div class="messages" id="messages">
+        </div>
+        <div class="input-container">
+            <form id="message-form">
+                <input type="text" id="message-input" placeholder="Type your message...">
+            <div style="padding: 10px;">
+            </div>
+                <input type="submit" value="Send">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const messageForm = document.getElementById('message-form');
+        const messageInput = document.getElementById('message-input');
+        const messagesDiv = document.getElementById('messages');
+        addMessage('bot', 'Hey, I am  MercInsight​: Your Personal Chatbot for Instant Company Insights​');
+        messageForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const question = messageInput.value.trim();
+            if (question === '') return;
+            addMessage('user', question);
+            const response = await fetch('http://127.0.0.1:80/getAnswer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ question })
+            });
+            const data = await response.json();
+            const answer = data.answer;
+            addMessage('bot', answer);
+            messageInput.value = '';
+        });
+
+        function addMessage(sender, text) {
+            const messageDiv = document.createElement('div');
+            const messageParagraph = document.createElement('p');
+            messageParagraph.textContent = text;
+            messageDiv.appendChild(messageParagraph);
+            messageDiv.classList.add('message');
+            if (sender === 'user') {
+                messageDiv.classList.add('user-message');
+            }
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    </script>
+</body>
+</html>
